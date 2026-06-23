@@ -1,6 +1,9 @@
 import random
 import streamlit as st
 
+#FIX: updated the import statement using claude
+from logic_utils import check_guess
+
 def get_range_for_difficulty(difficulty: str):
     if difficulty == "Easy":
         return 1, 20
@@ -28,24 +31,7 @@ def parse_guess(raw: str):
 
     return True, value, None
 
-
-def check_guess(guess, secret):
-    if guess == secret:
-        return "Win", "🎉 Correct!"
-
-    try:
-        if guess > secret:
-            return "Too High", "📈 Go HIGHER!"
-        else:
-            return "Too Low", "📉 Go LOWER!"
-    except TypeError:
-        g = str(guess)
-        if g == secret:
-            return "Win", "🎉 Correct!"
-        if g > secret:
-            return "Too High", "📈 Go HIGHER!"
-        return "Too Low", "📉 Go LOWER!"
-
+#FIX: Moved the check_guess function to logic_utils.py using claude
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
     if outcome == "Win":
@@ -105,7 +91,7 @@ if "history" not in st.session_state:
     st.session_state.history = []
 
 st.subheader("Make a guess")
-
+# FIXME: The Range is hardcoded and not dynamic (high/low) based on difficulty.
 st.info(
     f"Guess a number between 1 and 100. "
     f"Attempts left: {attempt_limit - st.session_state.attempts}"
@@ -145,6 +131,7 @@ if st.session_state.status != "playing":
     st.stop()
 
 if submit:
+    # FIXME: Increment needs to move down only after a guess is valid
     st.session_state.attempts += 1
 
     ok, guess_int, err = parse_guess(raw_guess)
@@ -153,6 +140,10 @@ if submit:
         st.session_state.history.append(raw_guess)
         st.error(err)
     else:
+        # FIXME: Add constraints to ensure guess is within range
+        #        based on difficulty (low <= guess <= high)
+        #        If out of range, warn and skip increment.
+        #        If in range, increment attempt and check_guess.
         st.session_state.history.append(guess_int)
 
         if st.session_state.attempts % 2 == 0:
