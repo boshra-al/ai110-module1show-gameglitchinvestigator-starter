@@ -90,10 +90,10 @@ if "status" not in st.session_state:
 if "history" not in st.session_state:
     st.session_state.history = []
 
+#FIX: Updated subheader to dynamically change based on difficulty using claude
 st.subheader("Make a guess")
-# FIXME: The Range is hardcoded and not dynamic (high/low) based on difficulty.
 st.info(
-    f"Guess a number between 1 and 100. "
+    f"Guess a number between {low} and {high}. "
     f"Attempts left: {attempt_limit - st.session_state.attempts}"
 )
 
@@ -139,11 +139,11 @@ if submit:
     if not ok:
         st.session_state.history.append(raw_guess)
         st.error(err)
+    #FIX: Added guessing contraint and undid the increment for invalid guess using claude
+    elif guess_int < low or guess_int > high:
+        st.session_state.attempts -= 1
+        st.warning(f"Guess must be between {low} and {high}. Try again.")
     else:
-        # FIXME: Add constraints to ensure guess is within range
-        #        based on difficulty (low <= guess <= high)
-        #        If out of range, warn and skip increment.
-        #        If in range, increment attempt and check_guess.
         st.session_state.history.append(guess_int)
 
         if st.session_state.attempts % 2 == 0:
